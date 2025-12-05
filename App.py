@@ -3,36 +3,28 @@ import yaml
 
 app = Flask(__name__)
 
-# Carrega o decoder YAML
-with open("decoderx.yaml", "r") as f:
-    decoder_config = yaml.safe_load(f)
+@app.route("/")
+def home():
+    return {"status": "Decoder-X ativo"}
 
-# Função simples de decodificação
-def decode_amal(raw_code):
-    # Exemplo fictício simplificado (você depois substitui pela sua lógica)
-    # raw_code = "AMAL:1-5-9-11-14"
-    try:
-        if not raw_code.startswith("AMAL:"):
-            return {"error": "Formato inválido"}
-
-        nums = raw_code.replace("AMAL:", "").split("-")
-        nums = [int(n) for n in nums]
-
-        return {
-            "decoded_sequence": nums,
-            "decoder_used": decoder_config.get("decoder", "X")
-        }
-    except:
-        return {"error": "Falha ao processar código AMAL"}
-
-# Rota principal
 @app.route("/decode", methods=["POST"])
 def decode():
-    data = request.get_json()
-    raw = data.get("amal", "")
-    result = decode_amal(raw)
-    return jsonify(result)
+    try:
+        # recebe o payload em texto
+        payload = request.data.decode("utf-8")
 
-# Necessário para o Render
+        # tenta interpretar como YAML
+        data = yaml.safe_load(payload)
+
+        # demonstra retorno (AQUI você coloca sua lógica real)
+        return jsonify({
+            "recebido": data,
+            "status": "processado com sucesso"
+        })
+
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 400
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
