@@ -1,0 +1,7 @@
+decoder_version: 1.0
+mapping_rules:
+  - pattern: "[01]{15}"
+    action: "translate binary mask to LF-combination"
+examples:
+  input: "010011001010110"
+  output: "01 04 05 09 12 14"
